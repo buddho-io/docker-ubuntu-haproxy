@@ -1,0 +1,21 @@
+[template]
+
+# The name of the template that will be used to render the application's configuration file
+# Confd will look in `/etc/confd/templates` for these files by default
+src = "haproxy.cfg"
+
+# The location to place the rendered configuration file
+dest = "/opt/etc/haproxy/haproxy.cfg"
+
+# The etcd keys or directory to watch.  This is where the information to fill in
+# the template will come from.
+keys = [ "/services/drone" ]
+
+# File ownership and mode information
+owner = "haproxy"
+mode = "0600"
+
+# These are the commands that will be used to check whether the rendered config is
+# valid and to reload the actual service once the new config is in place
+check_cmd = "/usr/sbin/haproxy -c -f {{.src}}"
+reload_cmd = "/usr/sbin/haproxy -f {{.dist}} -p /var/run/haproxy.pid -sf $(cat /var/run/haproxy.pid)"
